@@ -1,4 +1,4 @@
-package com.saivo.recommendoapi
+package com.saivo.recommendo
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
