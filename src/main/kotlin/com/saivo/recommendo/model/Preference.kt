@@ -1,15 +1,17 @@
 package com.saivo.recommendo.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.GenericGenerator
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
-import javax.persistence.Table
+import java.util.*
+import javax.persistence.*
 
 @Entity
 @Table(name = "Preferences")
 class Preference(@Id
-                 @GeneratedValue(generator = "system-uuid")
-                 @GenericGenerator(name = "system-uuid", strategy = "uuid")
-                 var id: String? = null
+                 @GeneratedValue(generator = "pg-uuid", strategy = GenerationType.AUTO)
+                 @GenericGenerator(name = "pg-uuid", strategy = "uuid2")
+                 @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+                 var id: String? = null,
+                 var Likes: String
 )
