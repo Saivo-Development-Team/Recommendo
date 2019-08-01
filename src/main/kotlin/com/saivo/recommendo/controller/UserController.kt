@@ -27,8 +27,9 @@ class UserController {
         return userService!!.getUsers()
     }
 
+    @ResponseBody
     @PostMapping("/api/users")
-    fun addUser(@RequestBody user: User) {
+    fun addUser(@RequestBody user: User): String? {
         if (user.preferences.isNotEmpty()) user.preferences.forEach { preference ->
             preferenceService!!.addPreference(preference)
         }
@@ -38,6 +39,7 @@ class UserController {
             recommendationService!!.addRecommendation(recommendation)
         }
         userService!!.addUser(user)
+        return user.id
     }
 
     @GetMapping("/api/users/{id}")

@@ -12,7 +12,7 @@ group = "com.saivo"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
-val developmentOnly by configurations.creating
+val developmentOnly: Configuration? by configurations.creating
 configurations {
     runtimeClasspath {
         extendsFrom(developmentOnly)
@@ -34,23 +34,21 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-//
-//    implementation("org.springframework.session:spring-session-core")
-    implementation("org.springframework.boot:spring-boot-starter-web")
 
+    implementation("org.springframework.session:spring-session-core")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+    implementation("org.springframework.security:spring-security-jwt:1.0.10.RELEASE")
+    
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-//    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-//
-//    implementation("com.graphql-java:graphql-java:11.0")
-//    implementation("com.graphql-java:graphql-java-spring-boot-starter-webmvc:1.0")
-
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    developmentOnly!!("org.springframework.boot:spring-boot-devtools")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

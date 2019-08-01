@@ -8,7 +8,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Preferences")
-class Preference(@Id
+data class Preference(@Id
                  @GeneratedValue(generator = "pg-uuid", strategy = GenerationType.AUTO)
                  @GenericGenerator(name = "pg-uuid", strategy = "uuid2")
                  @JsonProperty(access = JsonProperty.Access.READ_ONLY)

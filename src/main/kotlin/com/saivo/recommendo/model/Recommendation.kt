@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "Recommendations")
-class Recommendation(
+data class Recommendation(
         @Id
         @GeneratedValue(generator = "pg-uuid", strategy = GenerationType.AUTO)
         @GenericGenerator(name = "pg-uuid", strategy = "uuid2")
