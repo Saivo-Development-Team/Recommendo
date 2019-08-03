@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class RecommendoApplication
+class RecommendoServer
 
 fun main(args: Array<String>) {
-	runApplication<RecommendoApplication>(*args)
+	runApplication<RecommendoServer>(*args)
 }
