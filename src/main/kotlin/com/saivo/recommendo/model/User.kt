@@ -3,6 +3,7 @@ package com.saivo.recommendo.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import javax.persistence.*
 import java.util.stream.Collectors
@@ -31,13 +32,12 @@ data class User(
         @OneToMany @OrderColumn val roles: Set<Role>,
         @OneToMany @OrderColumn val preferences: Set<Preference>,
         @OneToMany @OrderColumn val recommendations: Set<Recommendation>
-) : ModelWithID(),UserDetails {
+) : ModelWithID(), UserDetails {
 
         override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-                return roles
-                        .stream()
-                        .map { role -> SimpleGrantedAuthority("ROLE_${role.role_type}" ) }
-                        .collect(Collectors.toList())
+                return roles.stream().map {
+                        role -> SimpleGrantedAuthority("ROLE_${role.role_type}" )
+                }.collect(Collectors.toList())
         }
 
         override fun isEnabled(): Boolean {
