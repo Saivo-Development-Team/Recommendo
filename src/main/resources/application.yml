@@ -20,7 +20,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
         jdbc:
           lob:
-            non_contextual_creation:
-              hibernate: true
-      ddl-auto: ${DDL_SETTING}
+            non_contextual_creation:hibernate: true
+        hbm2ddl:
+          auto: ${DDL_SETTING}
+
+
+
 
