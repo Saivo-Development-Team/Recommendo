@@ -5,6 +5,22 @@ spring:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+    schema:
+      - classpath:oauth-schema.sql
+      - classpath:oauth-clients.sql
+      - classpath:saivo-users.sql
+  jpa:
+    properties:
+      hibernate:
+        dialect: 'org.hibernate.dialect.PostgreSQL9Dialect'
+        jdbc:
+          lob:
+            non_contextual_creation:
+              hibernate: true
+    hibernate:
+      ddl-auto: create-drop
+  batch:
+    initialize-schema: always
 
   security:
     oauth2:
@@ -14,18 +30,11 @@ spring:
             client-id: ${GOOGLE_CLIENTID}
             client-secret: ${GOOGLE_CLIENTSECRET}
 
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL9Dialect
-        jdbc:
-          lob:
-            non_contextual_creation:
-              hibernate: true
-
-        hbm2ddl:
-          auto: ${DDL_SETTING}
-
-
-
-
+security:
+  oauth2:
+    resource:
+      token-info-uri: http://localhost:8080/oauth/check_token
+    client:
+      client-id: ${RESOURCE_ID}
+      client-secret: ${RESOURCE_SECRET}
+      authorized-grant-types: 'password'

@@ -1,0 +1,2 @@
+INSERT INTO public.users (id, password, username, account_expired, account_locked, credentials_expired, email, enabled, firstname, lastname)
+VALUES ('732242ac-55e1-4d78-930e-c87d3b76ce27', '$2y$12$kqYzVVbMOjDSE2dfoE9Kw.yQ43TCgUgPjlXJTiM6e7.H1DPmN6xsK', 'saivo', true, true, true, 'ian@saivo.com', true, 'Ian', 'Mubangizi');
