@@ -3,35 +3,35 @@ package com.saivo.recommendo.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
-import javax.persistence.*
 import java.util.stream.Collectors
-
+import javax.persistence.*
 
 
 @Entity
 @Table(name = "Users")
-data class User(
+data class User (
         val email: String,
 
         @Column(name = "username", nullable = false, unique = true)
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         val _username: String,
 
         val lastname: String,
         val firstname: String,
 
         @Column(name = "password")
-        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) val _password: String,
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        var _password: String,
 
         val enabled: Boolean,
         val credentials_expired: Boolean,
         val account_expired: Boolean,
         val account_locked: Boolean,
 
-        @OneToMany @OrderColumn val roles: Set<Role>,
-        @OneToMany @OrderColumn val preferences: Set<Preference>,
-        @OneToMany @OrderColumn val recommendations: Set<Recommendation>
+        @OneToMany(fetch = FetchType.EAGER) @OrderColumn val roles: Set<Role>,
+        @OneToMany(fetch = FetchType.EAGER)  @OrderColumn val preferences: Set<Preference>,
+        @OneToMany(fetch = FetchType.EAGER)  @OrderColumn val recommendations: Set<Recommendation>
 ) : ModelWithID(), UserDetails {
 
         override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
@@ -63,5 +63,4 @@ data class User(
         override fun isAccountNonLocked(): Boolean {
                 return account_locked
         }
-
 }
