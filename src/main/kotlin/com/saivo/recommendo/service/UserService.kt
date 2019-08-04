@@ -38,10 +38,9 @@ class UserService: UserDetailsService {
     }
 
     fun addUser(user: User) {
-        userRepository!!.save(user)
-//                .apply {
-//            this._password = encoder!!.encode(user._password)
-//        }
+        userRepository!!.save(user.apply {
+            this._password = encoder!!.encode(user.password)
+        })
     }
 
     fun deleteUser(id: String) {

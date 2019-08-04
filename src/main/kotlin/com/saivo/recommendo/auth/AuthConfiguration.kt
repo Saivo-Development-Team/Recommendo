@@ -35,12 +35,7 @@ class AuthConfiguration: AuthorizationServerConfigurerAdapter() {
     }
 
     override fun configure(clients: ClientDetailsServiceConfigurer?) {
-        clients!!.jdbc(dataSource)
-                .withClient(System.getenv("RESOURCE_ID"))
-                .secret(encoder!!.encode(System.getenv("RESOURCE_SECRET")))
-                .authorizedGrantTypes("password")
-                .scopes("all")
-                .and().jdbc().passwordEncoder(encoder)
+        clients!!.jdbc(dataSource).passwordEncoder(encoder)
     }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {

@@ -18,7 +18,7 @@ spring:
             non_contextual_creation:
               hibernate: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   batch:
     initialize-schema: always
 
@@ -37,4 +37,4 @@ security:
     client:
       client-id: ${RESOURCE_ID}
       client-secret: ${RESOURCE_SECRET}
-      authorized-grant-types: 'password'
+      authorized-grant-types: ${RESOURCE_GRANTS}
