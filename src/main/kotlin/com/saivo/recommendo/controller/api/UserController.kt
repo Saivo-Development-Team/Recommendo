@@ -1,4 +1,4 @@
-package com.saivo.recommendo.controller
+package com.saivo.recommendo.controller.api
 
 import com.saivo.recommendo.model.User
 import com.saivo.recommendo.service.ActivityService
