@@ -8,7 +8,7 @@ import javax.persistence.Id
 import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
-open class ModelWithID(
+open class WithId(
         @Id
         @GeneratedValue(generator = "pg-uuid", strategy = GenerationType.AUTO)
         @GenericGenerator(name = "pg-uuid", strategy = "uuid2")

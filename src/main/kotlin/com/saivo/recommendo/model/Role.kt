@@ -1,6 +1,8 @@
 package com.saivo.recommendo.model
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Table
 
 
 @Entity
@@ -10,4 +12,4 @@ class Role(
         @Column(name = "role")
         val role_type: String? = null // e.g USER, ADMIN, CLIENT, id: String?
 
-) : ModelWithID()
+) : WithId()

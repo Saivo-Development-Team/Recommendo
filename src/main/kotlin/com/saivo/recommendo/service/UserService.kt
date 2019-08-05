@@ -1,5 +1,6 @@
 package com.saivo.recommendo.service
 
+import com.saivo.recommendo.model.AuthUser
 import com.saivo.recommendo.model.User
 import com.saivo.recommendo.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,7 +30,7 @@ class UserService: UserDetailsService {
 
     override fun loadUserByUsername(username: String?): UserDetails {
         return UserDetailsService {
-            userRepository!!.findUserBy_username(username!!)
+            AuthUser(userRepository!!.findUserByUsername(username!!)!!)
         }.loadUserByUsername(username)
     }
 
@@ -39,7 +40,7 @@ class UserService: UserDetailsService {
 
     fun addUser(user: User) {
         userRepository!!.save(user.apply {
-            this._password = encoder!!.encode(user.password)
+            this.password = encoder!!.encode(user.password)
         })
     }
 
