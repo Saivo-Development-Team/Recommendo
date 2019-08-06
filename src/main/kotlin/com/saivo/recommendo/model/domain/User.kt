@@ -1,6 +1,8 @@
-package com.saivo.recommendo.model
+package com.saivo.recommendo.model.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.saivo.recommendo.model.infrastructure.Role
+import com.saivo.recommendo.model.infrastructure.WithId
 import java.io.Serializable
 import javax.persistence.*
 
