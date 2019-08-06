@@ -1,6 +1,6 @@
 package com.saivo.recommendo.service
 
-import com.saivo.recommendo.model.Recommendation
+import com.saivo.recommendo.model.domain.Recommendation
 import com.saivo.recommendo.repository.RecommendationRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service

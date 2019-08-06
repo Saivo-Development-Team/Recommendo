@@ -1,6 +1,6 @@
 package com.saivo.recommendo.controller.api
 
-import com.saivo.recommendo.model.User
+import com.saivo.recommendo.model.domain.User
 import com.saivo.recommendo.service.ActivityService
 import com.saivo.recommendo.service.PreferenceService
 import com.saivo.recommendo.service.RecommendationService
@@ -22,10 +22,11 @@ class UserController {
     @Autowired
     val activityService: ActivityService? = null
 
+    @GetMapping("/api/users/{id}")
+    fun getUser(@PathVariable id: String) = userService!!.getUser(id)
+
     @GetMapping("/api/users")
-    fun getUsers(): List<User> {
-        return userService!!.getUsers()
-    }
+    fun getUsers(): List<User> = userService!!.getUsers()
 
     @ResponseBody
     @PostMapping("/api/users")
@@ -38,11 +39,8 @@ class UserController {
             activityService!!.addActivity(recommendation.activity)
             recommendationService!!.addRecommendation(recommendation)
         }
-        userService!!.addUser(user)
-        return user.id
-    }
 
-    @GetMapping("/api/users/{id}")
-    fun getUser(@PathVariable id: String) = userService!!.getUser(id)
+        return userService!!.addUser(user)
+    }
 
 }

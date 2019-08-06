@@ -31,7 +31,9 @@ class AuthConfiguration: AuthorizationServerConfigurerAdapter() {
     private val authenticationManager: AuthenticationManager? = null
 
     override fun configure(security: AuthorizationServerSecurityConfigurer?) {
-        security!!.checkTokenAccess("isAuthenticated()").passwordEncoder(encoder)
+        security!!.checkTokenAccess("isAuthenticated()")
+                .tokenKeyAccess("permitAll")
+                .passwordEncoder(encoder)
     }
 
     override fun configure(clients: ClientDetailsServiceConfigurer?) {
