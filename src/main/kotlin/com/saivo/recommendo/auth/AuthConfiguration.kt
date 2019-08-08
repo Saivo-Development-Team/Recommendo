@@ -1,5 +1,6 @@
 package com.saivo.recommendo.auth
 
+import com.saivo.recommendo.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -28,6 +29,9 @@ class AuthConfiguration: AuthorizationServerConfigurerAdapter() {
     private val approval: ApprovalStore? = null
 
     @Autowired
+    private val userService: UserService? = null
+
+    @Autowired
     private val authenticationManager: AuthenticationManager? = null
 
     override fun configure(security: AuthorizationServerSecurityConfigurer?) {
@@ -43,6 +47,7 @@ class AuthConfiguration: AuthorizationServerConfigurerAdapter() {
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {
         endpoints!!.tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
+                .userDetailsService(userService)
                 .approvalStore(approval)
     }
 }

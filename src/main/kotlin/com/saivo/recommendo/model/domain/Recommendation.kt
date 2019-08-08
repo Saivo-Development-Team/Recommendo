@@ -9,5 +9,6 @@ import javax.persistence.Table
 @Entity
 @Table(name = "Recommendations")
 data class Recommendation(
-        @OneToOne var activity: Activity
+        @OneToOne
+        val activity: Activity
 ) : WithId()

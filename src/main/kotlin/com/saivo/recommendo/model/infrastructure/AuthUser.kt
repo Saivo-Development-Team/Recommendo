@@ -11,7 +11,7 @@ class AuthUser(user: User) : User(user), UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val grants = arrayListOf<GrantedAuthority>()
         super.roles.forEach { role ->
-            grants.add(SimpleGrantedAuthority(role.role_type))
+            grants.add(SimpleGrantedAuthority(role.role_type) as GrantedAuthority)
         }
         return grants
     }

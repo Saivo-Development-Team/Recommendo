@@ -2,6 +2,7 @@ package com.saivo.recommendo.service
 
 import com.saivo.recommendo.model.domain.User
 import com.saivo.recommendo.model.infrastructure.AuthUser
+import com.saivo.recommendo.model.objects.Login
 import com.saivo.recommendo.repository.UserRepository
 import com.saivo.recommendo.util.exception.EmptyResultException
 import com.saivo.recommendo.util.exception.UserNotFoundException
@@ -55,6 +56,12 @@ class UserService : UserDetailsService {
                 throw UserNotFoundException()
             }
         }!!
+    }
+
+    fun loginUser(login: Login): User? {
+        return getUserByUsername(login.username).takeIf {
+            encoder!!.matches(login.password, it.password)
+        }
     }
 
     fun deleteUser(id: String) {

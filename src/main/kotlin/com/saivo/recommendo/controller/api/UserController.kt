@@ -1,5 +1,6 @@
 package com.saivo.recommendo.controller.api
 
+import com.saivo.recommendo.model.objects.Login
 import com.saivo.recommendo.model.domain.User
 import com.saivo.recommendo.service.ActivityService
 import com.saivo.recommendo.service.PreferenceService
@@ -41,6 +42,16 @@ class UserController {
         }
 
         return userService!!.addUser(user)
+    }
+
+    @PostMapping("/users/register")
+    fun registerUser(@RequestBody user: User): String? {
+        return addUser(user)
+    }
+
+    @PostMapping("/users/login")
+    fun loginUser(@RequestBody login: Login): User? {
+        return userService!!.loginUser(login)
     }
 
 }
