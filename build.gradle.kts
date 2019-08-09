@@ -4,8 +4,13 @@ plugins {
 	kotlin("plugin.jpa") version "1.3.31"
 	id("org.springframework.boot") version "2.2.0.M4"
 	id("io.spring.dependency-management") version "1.0.7.RELEASE"
+	id("com.bmuschko.docker-spring-boot-application") version "4.10.0"
 	kotlin("jvm") version "1.3.31"
 	kotlin("plugin.spring") version "1.3.31"
+}
+
+apply{
+	plugin("io.spring.dependency-management")
 }
 
 group = "com.saivo"
@@ -48,5 +53,14 @@ tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "1.8"
+	}
+}
+
+docker {
+	springBootApplication {
+		baseImage.set("openjdk:8-alpine")
+		tag.set("saivo/recommendo:$version")
+		maintainer.set("Ian Mubangizi 'io@ianmubngizi.com'")
+		ports.set(listOf(8080, 8080))
 	}
 }

@@ -1,15 +1,38 @@
-version: '3.1'
+version: '3.3'
 services:
-  db:
-    image: 'postgres:latest'
+  postgres:
+    container_name: recommendo_database
+    image: postgres:latest
     restart: always
     environment:
-      - 'POSTGRES_USER=${DATABASE_USERNAME}'
-      - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD}'
-      - 'POSTGRES_DB=${DATABASE}'
+      - "POSTGRES_DB=${DATABASE}"
+      - "POSTGRES_USER=${DATABASE_USERNAME}"
+      - "POSTGRES_PASSWORD=${DATABASE_PASSWORD}"
     volumes:
-      - 'data:/var/lib/postgresql/data'
+      - "data:/var/lib/postgresql/data"
+    networks:
+      frontend:
+        ipv4_address: 172.60.0.5
     ports:
-      - '${DATABASE_PORT}:5432'
+      - "5432:5432"
+  server:
+    container_name: recommendo_server
+    image: 'saivo/recommendo:latest'
+    environment:
+      - "DATABASE_PASSWORD=${DATABASE_PASSWORD}"
+      - "DATABASE_USERNAME=${DATABASE_USERNAME}"
+      - "DATABASE_URL=jdbc:postgresql://172.60.0.5:5432/${DATABASE}"
+    networks:
+      frontend:
+        ipv4_address: 172.60.0.6
+    ports:
+      - "9000:8080"
+    depends_on:
+      - postgres
 volumes:
   data: {}
+networks:
+  frontend:
+    ipam:
+      config:
+        - subnet: 172.60.0.0/24
