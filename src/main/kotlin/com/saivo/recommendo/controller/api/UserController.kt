@@ -31,7 +31,7 @@ class UserController {
 
     @ResponseBody
     @PostMapping("/api/users")
-    fun addUser(@RequestBody user: User): String? {
+    fun addUser(@RequestBody user: User): String {
         if (user.preferences.isNotEmpty()) user.preferences.forEach { preference ->
             preferenceService!!.addPreference(preference)
         }
