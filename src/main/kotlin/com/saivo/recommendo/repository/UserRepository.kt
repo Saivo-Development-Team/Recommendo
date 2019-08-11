@@ -4,5 +4,5 @@ import com.saivo.recommendo.model.domain.User
 import org.springframework.data.repository.CrudRepository
 
 interface UserRepository: CrudRepository<User, String>{
-    fun findUserByUsername(username: String): User?
+    fun findUserByEmail(email: String): User?
 }

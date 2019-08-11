@@ -1,3 +1,2 @@
 INSERT INTO public.oauth_client_details (client_id, resource_ids, client_secret, scope, authorized_grant_types, web_server_redirect_uri, authorities, access_token_validity, refresh_token_validity, additional_information, autoapprove)
-VALUES ('saivo-recommendo-api', '', '$2y$12$BmnwPope6J4vbT5Hy99gdOZb/I90Xt9U1wIZ/JH2TDKxs0fQt9HEa', 'all',
-        'password, refresh_token, client_credentials', '', '', null, null, '{}', '');
+VALUES ('saivo-recommendo-api', 'server-admin', '$2y$12$BmnwPope6J4vbT5Hy99gdOZb/I90Xt9U1wIZ/JH2TDKxs0fQt9HEa', 'all,register,read_write', 'password, refresh_token, client_credentials', '', '', 50000, 1000000, '{}', '');

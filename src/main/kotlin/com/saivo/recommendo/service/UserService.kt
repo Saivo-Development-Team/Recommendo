@@ -23,15 +23,15 @@ class UserService : UserDetailsService {
     @Autowired
     private val encoder: PasswordEncoder? = null
 
-    fun addUser(user: User): String {
+    fun saveUser(user: User, action: String? = "save"): String {
         userRepository!!.save(user.apply {
-            this.password = encoder!!.encode(user.password)
+            password = encoder!!.encode(password)
         }).also {
-            return getUserByUsername(it.username).id!!
+            return getUserByUsername(it.email).id
         }
     }
 
-    fun getUser(id: String): User {
+    fun getUserById(id: String): User {
         return userRepository!!.findById(id).orElseThrow {
             UserNotFoundException()
         }
@@ -45,14 +45,14 @@ class UserService : UserDetailsService {
         }
     }
 
-    override fun loadUserByUsername(username: String?): UserDetails {
+    override fun loadUserByUsername(email: String): UserDetails {
         return UserDetailsService {
-            AuthUser(getUserByUsername(username))
-        }.loadUserByUsername(username)
+            AuthUser(getUserByUsername(email))
+        }.loadUserByUsername(email)
     }
 
-    fun getUserByUsername(username: String?): User {
-        userRepository!!.findUserByUsername(username!!).let {
+    fun getUserByUsername(email: String): User {
+        userRepository!!.findUserByEmail(email).let {
             return when {
                 it != null -> it
                 else -> throw UserNotFoundException()
@@ -61,7 +61,7 @@ class UserService : UserDetailsService {
     }
 
     fun loginUser(login: Login): User { // Send with Access Token
-        getUserByUsername(login.username).let {
+        getUserByUsername(login.email).let {
             return when {
                 encoder!!.matches(login.password, it.password) -> it
                 else -> throw BadUserCredentialsException()
@@ -69,7 +69,20 @@ class UserService : UserDetailsService {
         }
     }
 
-    fun deleteUser(id: String) {
-        userRepository!!.deleteById(id)
-    }
+//    fun isUser(Id: String, email: String = ""): Boolean {
+//        try {
+//            return when {
+//                getUserById(Id).id!!.isNotEmpty() -> true
+//                email.isNotBlank() -> getUserByUsername(email).id!!.isNotEmpty()
+//                else -> Id == getUserByUsername(email).id
+//            }
+//        } catch (e: UserNotFoundException) {
+//            println(e)
+//        }
+//        return false
+//    }
+
+//    fun deleteUser(id: String) {
+//        userRepository!!.deleteById(id)
+//    }
 }

@@ -2,10 +2,10 @@ package com.saivo.recommendo.service
 
 import com.saivo.recommendo.model.infrastructure.Client
 import com.saivo.recommendo.repository.ClientRepository
+import com.saivo.recommendo.util.createUUID
 import com.saivo.recommendo.util.exception.ClientNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class ClientService {
@@ -32,14 +32,9 @@ class ClientService {
         return clientRepository!!.findAll()
     }
 
-    fun addClient(client: Client): String {
+    fun saveClient(client: Client, action: String = "register"): String {
         return clientRepository!!.save(client.apply {
-            UUID.randomUUID().toString().let {
-                if (!isClient(it)) {
-                    clientId = it
-                }
-            }
+            clientId = createUUID({isClient(clientId!!)}, clientId!!)
         }).clientId!!
     }
-
 }

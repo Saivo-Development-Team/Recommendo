@@ -1,0 +1,50 @@
+{
+  "id": "2ef990cd-c8a1-4ed0-8af0-8fe00ef4b6ef",
+  "email": "test@saivo.com",
+  "enabled": true,
+  "password": "password",
+  "lastname": "String - lastname",
+  "firstname": "String - firstname",
+  "accountNotLocked": false,
+  "accountNotExpired": false,
+  "credentialsNotExpired": false,
+  "roles": [
+    {
+      "id": "f5216208-6f28-4100-9e5a-ae435ca7a22c",
+      "role_type": "USER"
+    },
+    {
+      "id": "a096aaa1-b769-41e6-9cc8-34f2bfeabad1",
+      "role_type": "ADMIN"
+    }
+  ],
+  "preferences": [
+    {
+      "id": "44ac4b99-db9c-4aaf-8a5c-b6bce8c82fa8",
+      "prefer": "String - prefer",
+      "disfavor": "String - disfavor",
+      "description": "String - description"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "1f1e90f8-238c-41c9-898f-154afc39da2b",
+      "activity": {
+        "id": "80d09494-3908-43c0-8074-af1632035aa2",
+        "ratings": [
+          {
+            "id": "c03f3438-fe56-4743-b28f-4b82d1a32cdb",
+            "stars": 3,
+            "comment": "String - comment",
+            "written": "2019-08-10T02:06:37.871+0000"
+          }
+        ],
+        "title": "String - title",
+        "location": "String - location",
+        "category": "String - category",
+        "description": "String - description"
+      },
+      "date": "2019-08-11T01:13:27.363+0000"
+    }
+  ]
+}
