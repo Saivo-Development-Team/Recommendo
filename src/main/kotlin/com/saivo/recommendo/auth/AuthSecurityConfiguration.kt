@@ -19,7 +19,7 @@ class AuthSecurityConfiguration: WebSecurityConfigurerAdapter() {
     private val encoder: PasswordEncoder? = null
 
     @Bean
-    override fun authenticationManager(): AuthenticationManager {
+    override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
 
