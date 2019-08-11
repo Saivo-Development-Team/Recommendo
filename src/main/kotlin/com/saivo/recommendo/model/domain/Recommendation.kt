@@ -1,14 +1,14 @@
 package com.saivo.recommendo.model.domain
 
-
 import com.saivo.recommendo.model.infrastructure.WithId
-import javax.persistence.Entity
-import javax.persistence.OneToOne
-import javax.persistence.Table
+import java.sql.Timestamp
+import javax.persistence.*
+import javax.persistence.CascadeType.*
 
 @Entity
-@Table(name = "Recommendations")
+@Table(name = "recommendation")
 data class Recommendation(
-        @OneToOne
-        val activity: Activity
+        @OneToOne(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Activity::class)
+        val activity: Activity,
+        val date: Timestamp
 ) : WithId()

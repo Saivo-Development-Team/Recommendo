@@ -3,43 +3,36 @@ package com.saivo.recommendo.model.domain
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.saivo.recommendo.model.infrastructure.Role
 import com.saivo.recommendo.model.infrastructure.WithId
-import java.io.Serializable
 import javax.persistence.*
+import javax.persistence.CascadeType.*
 
 
 @Entity
-@Table(name = "Users")
-open class User(user: User?) : WithId(), Serializable {
+@Table(name = "users")
+open class User(
+        @Column(name = "email", nullable = false, unique = true)
+        open val email: String,
+        open val enabled: Boolean,
+        open val lastname: String,
+        open val firstname: String,
+        open val accountNotLocked: Boolean,
+        open val accountNotExpired: Boolean,
+        open val credentialsNotExpired: Boolean,
 
-    val email: String = user!!.email
+        @get:JvmName("_password")
+        @Column(name = "password", nullable = false)
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        var password: String,
 
-    @Column(name = "username", nullable = false, unique = true)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @get:JvmName("_username")
-    val username: String = user!!.username
+        @OrderColumn
+        @OneToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Role::class)
+        open val roles: Set<Role>,
 
-    val lastname: String = user!!.lastname
-    val firstname: String = user!!.firstname
+        @OrderColumn
+        @ManyToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Preference::class)
+        open val preferences: Set<Preference>,
 
-    @Column(name = "password", nullable = false)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @get:JvmName("_password")
-    var password: String = user!!.password
-
-    val enabled: Boolean = user!!.enabled
-    val credentialsExpired: Boolean = user!!.credentialsExpired
-    val accountExpired: Boolean = user!!.accountExpired
-    val accountLocked: Boolean = user!!.accountLocked
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @OrderColumn
-    val roles: Set<Role> = user!!.roles
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @OrderColumn
-    val preferences: Set<Preference> = user!!.preferences
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @OrderColumn
-    val recommendations: Set<Recommendation> = user!!.recommendations
-}
+        @OrderColumn
+        @ManyToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Recommendation::class)
+        open val recommendations: Set<Recommendation>
+) : WithId()

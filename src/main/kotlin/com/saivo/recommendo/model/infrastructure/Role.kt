@@ -6,10 +6,8 @@ import javax.persistence.Table
 
 
 @Entity
-@Table(name = "Roles")
+@Table(name = "role")
 class Role(
-
-        @Column(name = "role")
+        @Column(name = "role", unique = true, nullable = false, updatable = false)
         val role_type: String? = null // e.g USER, ADMIN, CLIENT, id: String?
-
 ) : WithId()

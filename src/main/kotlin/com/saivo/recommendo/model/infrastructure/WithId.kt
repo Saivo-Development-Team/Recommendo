@@ -1,6 +1,5 @@
 package com.saivo.recommendo.model.infrastructure
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.hibernate.annotations.GenericGenerator
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -12,6 +11,5 @@ open class WithId(
         @Id
         @GeneratedValue(generator = "pg-uuid", strategy = GenerationType.AUTO)
         @GenericGenerator(name = "pg-uuid", strategy = "uuid2")
-        @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-        val id: String? = null
+        val id: String = ""
 )
