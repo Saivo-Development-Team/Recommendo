@@ -3,6 +3,7 @@ package com.saivo.recommendo.controller.api
 import com.saivo.recommendo.model.objects.Login
 import com.saivo.recommendo.model.domain.User
 import com.saivo.recommendo.service.UserService
+import com.saivo.recommendo.util.exception.UserNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -16,7 +17,14 @@ class UserController {
     fun getUsers(): List<User> = userService!!.getUsers()
 
     @GetMapping("/api/users/{id}")
-    fun getUser(@PathVariable id: String) = userService!!.getUserById(id)
+    fun getUser(@PathVariable id: String) : User {
+        return try {
+            userService!!.getUserById(id)
+        } catch (e: UserNotFoundException) {
+            print(e.message)
+            e.message
+        } as User
+    }
 
     @ResponseBody
     @PutMapping("/api/users/{id}")

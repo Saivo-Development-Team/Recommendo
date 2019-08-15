@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.stereotype.Service
 
 
@@ -22,6 +23,9 @@ class UserService : UserDetailsService {
 
     @Autowired
     private val encoder: PasswordEncoder? = null
+
+    @Autowired
+    private val tokenStore: TokenStore? = null
 
     fun saveUser(user: User, action: String? = "save"): String {
         userRepository!!.save(user.apply {
@@ -68,21 +72,4 @@ class UserService : UserDetailsService {
             }
         }
     }
-
-//    fun isUser(Id: String, email: String = ""): Boolean {
-//        try {
-//            return when {
-//                getUserById(Id).id!!.isNotEmpty() -> true
-//                email.isNotBlank() -> getUserByUsername(email).id!!.isNotEmpty()
-//                else -> Id == getUserByUsername(email).id
-//            }
-//        } catch (e: UserNotFoundException) {
-//            println(e)
-//        }
-//        return false
-//    }
-
-//    fun deleteUser(id: String) {
-//        userRepository!!.deleteById(id)
-//    }
 }
