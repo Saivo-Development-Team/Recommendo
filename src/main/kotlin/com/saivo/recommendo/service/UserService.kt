@@ -2,6 +2,7 @@ package com.saivo.recommendo.service
 
 import com.saivo.recommendo.model.domain.User
 import com.saivo.recommendo.model.infrastructure.AuthUser
+import com.saivo.recommendo.model.objects.Response
 import com.saivo.recommendo.model.objects.Login
 import com.saivo.recommendo.repository.UserRepository
 import com.saivo.recommendo.util.exception.BadUserCredentialsException
@@ -27,11 +28,11 @@ class UserService : UserDetailsService {
     @Autowired
     private val tokenStore: TokenStore? = null
 
-    fun saveUser(user: User, action: String? = "save"): String {
+    fun saveUser(user: User, action: String? = "save"): Response {
         userRepository!!.save(user.apply {
             password = encoder!!.encode(password)
         }).also {
-            return getUserByUsername(it.email).id
+            return Response(data = getUserByUsername(it.email).id, status = "REGISTRATION_SUCCESSFUL")
         }
     }
 
@@ -64,12 +65,38 @@ class UserService : UserDetailsService {
         }
     }
 
-    fun loginUser(login: Login): User { // Send with Access Token
-        getUserByUsername(login.email).let {
-            return when {
-                encoder!!.matches(login.password, it.password) -> it
-                else -> throw BadUserCredentialsException()
+    fun loginUser(login: Login): Response { // Send with Access Token
+        val response = Response()
+        try {
+            response.data = getUserByUsername(login.email)
+            if(checkUserPassword(response.data as User, login.password)){
+                response.status = "LOGIN_SUCCESSFUL"
+                println(message = response.status)
+            } else {
+                response.status = "LOGIN_UNSUCCESSFUL"
+                response.data = null
             }
+        } catch (e : Exception) {
+            response.status = "LOGIN_UNSUCCESSFUL"
+            when(e){
+                is UserNotFoundException -> {
+                    response.error = "USER_NOT_FOUND"
+                    response.message = "Try Registering before Login"
+                }
+                is BadUserCredentialsException -> {
+                    response.error  = "BAD_USER_CREDENTIALS"
+                    response.message = "Seems like your Password and Email Details are invalid"
+                }
+            }
+            response.data = null
+        }
+        return response
+    }
+
+    fun checkUserPassword(user: User, password: String): Boolean {
+        return when {
+            encoder!!.matches(password, user.password) -> true
+            else -> throw BadUserCredentialsException()
         }
     }
 }
