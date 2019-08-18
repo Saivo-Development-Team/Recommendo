@@ -5,6 +5,8 @@ import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import javax.crypto.Cipher
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 private const val algol = "RSA"
 
@@ -13,6 +15,12 @@ fun createUUID(func: () -> Boolean, value: String): String {
         func() -> UUID.randomUUID().toString()
         else -> value
     }
+}
+
+fun <R> Throwable.multicatch(vararg classes: KClass<*>, block: () -> R): R {
+    if (classes.any { this::class.isSubclassOf(it) }) {
+        return block()
+    } else throw this
 }
 
 @Throws(Exception::class)

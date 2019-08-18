@@ -14,6 +14,9 @@ import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices
+
+
 
 
 @Component
@@ -29,12 +32,22 @@ class Beans {
 
     @Bean
     fun tokenStore(): TokenStore {
-        return JdbcTokenStoreBean(dataSource)
+        return JdbcTokenStore(dataSource)
+        // Bug -> JdbcTokenStore.readAccessToken [162] EmptyResultDataAccessException is thrown
+        // return JdbcTokenStoreBean(dataSource)  -> No RefreshToken Is produced
     }
 
     @Bean
     fun approvalStore() : ApprovalStore{
         return JdbcApprovalStore(dataSource)
+    }
+
+    @Bean
+    fun tokenServices(): DefaultTokenServices {
+        val defaultTokenServices = DefaultTokenServices()
+        defaultTokenServices.setTokenStore(tokenStore())
+        defaultTokenServices.setSupportRefreshToken(true)
+        return defaultTokenServices
     }
 }
 
