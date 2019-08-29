@@ -29,7 +29,7 @@ class ClientController {
     }
 
     @PostMapping("/clients/register")
-    fun registerClient(@RequestBody client: Client): String {
-        return clientService!!.saveClient(client)
+    fun registerClient(@RequestBody clientSecret: String): String {
+        return clientService!!.saveClient(secret =  clientSecret, action = "register")
     }
 }

@@ -32,8 +32,21 @@ class ClientService {
         return clientRepository!!.findAll()
     }
 
-    fun saveClient(client: Client, action: String = "register"): String {
-        return clientRepository!!.save(client.apply {
+    fun saveClient(client: Client? = null, secret: String = "", action: String = ""): String {
+        when(action){
+            "register" -> {
+                return clientRepository!!.save(Client().apply {
+                    scope = "REGISTER"
+                    clientId = createUUID({isClient(clientId!!)}, clientId!!)
+                    clientSecret = secret
+                    resourceIds = "ANDROID"
+                    accessTokenValidity = 6000
+                    refreshTokenValidity = 6000
+                    authorizedGrantTypes = "password,refresh_token"
+                }).clientId!!
+            }
+        }
+        return clientRepository!!.save(client!!.apply {
             clientId = createUUID({isClient(clientId!!)}, clientId!!)
         }).clientId!!
     }
