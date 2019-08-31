@@ -32,9 +32,7 @@ class Beans {
 
     @Bean
     fun tokenStore(): TokenStore {
-        return JdbcTokenStore(dataSource)
-        // Bug -> JdbcTokenStore.readAccessToken [162] EmptyResultDataAccessException is thrown
-        // return JdbcTokenStoreBean(dataSource)  -> No RefreshToken Is produced
+         return JdbcTokenStoreBean(dataSource)
     }
 
     @Bean
