@@ -32,6 +32,11 @@ class UserService : UserDetailsService {
         userRepository!!.save(user.apply {
             password = encoder!!.encode(password)
         }).also {
+            try{
+
+            } catch (e: Exception){
+                println(e)
+            }
             return Response(data = getUserByUsername(it.email).id, status = "REGISTRATION_SUCCESSFUL")
         }
     }
@@ -66,31 +71,52 @@ class UserService : UserDetailsService {
     }
 
     fun loginUser(login: Login): Response { // Send with Access Token
-        val response = Response()
-        try {
-            response.data = getUserByUsername(login.email)
-            if(checkUserPassword(response.data as User, login.password)){
-                response.status = "LOGIN_SUCCESSFUL"
-                println(message = response.status)
-            } else {
-                response.status = "LOGIN_UNSUCCESSFUL"
-                response.data = null
-            }
-        } catch (e : Exception) {
-            response.status = "LOGIN_UNSUCCESSFUL"
-            when(e){
-                is UserNotFoundException -> {
-                    response.error = "USER_NOT_FOUND"
-                    response.message = "Try Registering before Login"
+//        try {
+//            response.data = getUserByUsername(login.email)
+//            if(checkUserPassword(response.data as User, login.password)){
+//                response.status = "LOGIN_SUCCESSFUL"
+//                println(message = response.status)
+//            } else {
+//                response.status = "LOGIN_UNSUCCESSFUL"
+//                response.data = null
+//            }
+//        } catch (e : Exception) {
+//            response.status = "LOGIN_UNSUCCESSFUL"
+//            when(e){
+//                is UserNotFoundException -> {
+//                    response.error = "USER_NOT_FOUND"
+//                    response.message = "Try Registering before Login"
+//                }
+//                is BadUserCredentialsException -> {
+//                    response.error  = "BAD_USER_CREDENTIALS"
+//                    response.message = "Seems like your Password and Email Details are invalid"
+//                }
+//            }
+//            response.data = null
+//        }
+        return Response().apply {
+            try {
+                data = getUserByUsername(login.email)
+                if(checkUserPassword(data as User, login.password)){
+                    status = "LOGIN_SUCCESSFUL"
+                    message = """Logging in User: [${(data as User).id}]"""
+                    println(message = status)
                 }
-                is BadUserCredentialsException -> {
-                    response.error  = "BAD_USER_CREDENTIALS"
-                    response.message = "Seems like your Password and Email Details are invalid"
+            } catch (e: Exception) {
+                status = "LOGIN_UNSUCCESSFUL"
+                when(e){
+                    is UserNotFoundException -> {
+                        error = "USER_NOT_FOUND"
+                        message = "Try Registering before Login"
+                    }
+                    is BadUserCredentialsException -> {
+                        error = "BAD_USER_CREDENTIALS"
+                        message = "Seems like your Password and Email Details are invalid"
+                    }
                 }
+                data = null
             }
-            response.data = null
         }
-        return response
     }
 
     fun checkUserPassword(user: User, password: String): Boolean {
