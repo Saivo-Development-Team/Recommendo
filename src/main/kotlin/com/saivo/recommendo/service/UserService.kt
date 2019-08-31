@@ -9,11 +9,12 @@ import com.saivo.recommendo.util.exception.BadUserCredentialsException
 import com.saivo.recommendo.util.exception.EmptyResultException
 import com.saivo.recommendo.util.exception.UserNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.oauth2.provider.token.TokenStore
 import org.springframework.stereotype.Service
+import javax.validation.ConstraintViolationException
 
 
 @Service
@@ -26,15 +27,24 @@ class UserService : UserDetailsService {
     private val encoder: PasswordEncoder? = null
 
     fun saveUser(user: User, action: String? = "save"): Response {
-        userRepository!!.save(user.apply {
-            password = encoder!!.encode(password)
-        }).also {
+        return Response().apply {
             try {
-
+                userRepository!!.save(user.apply {
+                    password = encoder!!.encode(password)
+                }).also {
+                    data = it.id
+                    status = "REGISTRATION_SUCCESSFUL"
+                    message = "${it.firstname} ${it.lastname} Registered with ${it.email}"
+                }
             } catch (e: Exception) {
-                println(e)
+                status = "REGISTRATION_UNSUCCESSFUL"
+                when (e) {
+                    is DataIntegrityViolationException -> {
+                        error = "EMAIL_TAKEN"
+                        message = "Can't Register more accounts"
+                    }
+                }
             }
-            return Response(data = getUserByUsername(it.email).id, status = "REGISTRATION_SUCCESSFUL")
         }
     }
 
@@ -74,7 +84,7 @@ class UserService : UserDetailsService {
                     if (checkUserPassword(it, login.password)) {
                         data = it
                         status = "LOGIN_SUCCESSFUL"
-                        message = """Logging in User: [${it.id}]"""
+                        message = "${it.firstname} ${it.lastname} has Logged In"
                     }
                 }
             } catch (e: Exception) {
