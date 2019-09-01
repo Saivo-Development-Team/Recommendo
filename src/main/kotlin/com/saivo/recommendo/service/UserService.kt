@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import javax.validation.ConstraintViolationException
 
 
 @Service
@@ -63,9 +62,7 @@ class UserService : UserDetailsService {
     }
 
     override fun loadUserByUsername(email: String): UserDetails {
-        return UserDetailsService {
-            AuthUser(getUserByUsername(email))
-        }.loadUserByUsername(email)
+        return AuthUser(getUserByUsername(email))
     }
 
     fun getUserByUsername(email: String): User {
