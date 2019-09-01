@@ -1,5 +1,7 @@
 package com.saivo.recommendo.model.infrastructure
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -32,6 +34,8 @@ class Client(
         @Column(name = "resource_ids")
         var resourceIds: String? = null,
 
+        @JsonProperty
+        @JsonIgnore(value = true)
         @Column(name = "client_secret")
         var clientSecret: String? = null,
 

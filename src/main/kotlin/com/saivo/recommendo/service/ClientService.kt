@@ -6,6 +6,7 @@ import com.saivo.recommendo.util.createUUID
 import com.saivo.recommendo.util.exception.ClientNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class ClientService {
@@ -33,21 +34,38 @@ class ClientService {
     }
 
     fun saveClient(client: Client? = null, secret: String = "", action: String = ""): String {
-        when(action){
+        when (action) {
             "register" -> {
-                return clientRepository!!.save(Client().apply {
-                    scope = "REGISTER"
-                    clientId = createUUID({isClient(clientId!!)}, clientId!!)
-                    clientSecret = secret
-                    resourceIds = "ANDROID"
-                    accessTokenValidity = 6000
-                    refreshTokenValidity = 6000
-                    authorizedGrantTypes = "password,refresh_token"
-                }).clientId!!
+                return registerClient(secret)
+            }
+            "update" -> {
+                client?.let {
+                    return updateClient(it)
+                }
             }
         }
-        return clientRepository!!.save(client!!.apply {
-            clientId = createUUID({isClient(clientId!!)}, clientId!!)
+        return ""
+    }
+
+    fun registerClient(secret: String): String {
+        return clientRepository!!.save(Client().apply {
+            scope = "register"
+            clientId = UUID.randomUUID().toString().takeIf { !isClient(it) }
+            clientSecret = secret
+            resourceIds = System.getenv("RESOURCE_ID")
+            accessTokenValidity = 3600
+            refreshTokenValidity = 3600
+            authorizedGrantTypes = "client_credentials"
         }).clientId!!
+    }
+
+    fun updateClient(client: Client): String {
+        return clientRepository?.save(getClientById(client.clientId!!).apply {
+            scope += ",${client.scope}"
+            resourceIds += ",${client.resourceIds}"
+            accessTokenValidity = client.accessTokenValidity
+            refreshTokenValidity = client.refreshTokenValidity
+            authorizedGrantTypes += ",${client.authorizedGrantTypes}"
+        })?.clientId!!
     }
 }

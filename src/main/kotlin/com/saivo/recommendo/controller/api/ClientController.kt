@@ -23,9 +23,9 @@ class ClientController {
         return clientService!!.getClientById(clientId)
     }
 
-    @PutMapping("/api/clients/{clientId}")
-    fun updateClient(@RequestBody client: Client, @PathVariable("clientId") clientId: String): String {
-        return clientService!!.saveClient(client, "update")
+    @PutMapping("/clients/update")
+    fun updateClient(@RequestBody client: Client): String {
+        return clientService!!.saveClient(client, action = "update")
     }
 
     @PostMapping("/clients/register")
