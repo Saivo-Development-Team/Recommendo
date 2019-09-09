@@ -1,6 +1,7 @@
 package com.saivo.recommendo.service
 
 import com.saivo.recommendo.model.infrastructure.Client
+import com.saivo.recommendo.model.objects.Response
 import com.saivo.recommendo.repository.ClientRepository
 import com.saivo.recommendo.util.createUUID
 import com.saivo.recommendo.util.exception.ClientNotFoundException
@@ -33,18 +34,18 @@ class ClientService {
         return clientRepository!!.findAll()
     }
 
-    fun saveClient(client: Client? = null, secret: String = "", action: String = ""): String {
+    fun saveClient(client: Client? = null, secret: String = "", action: String = ""): Response {
         when (action) {
             "register" -> {
-                return registerClient(secret)
+                return Response(data = registerClient(secret))
             }
             "update" -> {
                 client?.let {
-                    return updateClient(it)
+                    return Response(data = updateClient(it))
                 }
             }
         }
-        return ""
+        return Response()
     }
 
     fun registerClient(secret: String): String {
