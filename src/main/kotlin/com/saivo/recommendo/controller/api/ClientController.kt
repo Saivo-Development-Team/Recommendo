@@ -1,6 +1,7 @@
 package com.saivo.recommendo.controller.api
 
 import com.saivo.recommendo.model.infrastructure.Client
+import com.saivo.recommendo.model.objects.Response
 import com.saivo.recommendo.service.ClientService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.prepost.PreAuthorize
@@ -24,12 +25,12 @@ class ClientController {
     }
 
     @PutMapping("/clients/update")
-    fun updateClient(@RequestBody client: Client): String {
+    fun updateClient(@RequestBody client: Client): Response {
         return clientService!!.saveClient(client, action = "update")
     }
 
     @PostMapping("/clients/register")
-    fun registerClient(@RequestBody clientSecret: String): String {
+    fun registerClient(@RequestBody clientSecret: String): Response {
         return clientService!!.saveClient(secret =  clientSecret, action = "register")
     }
 }

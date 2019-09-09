@@ -28,7 +28,7 @@ services:
       frontend:
         ipv4_address: 172.60.0.6
     ports:
-      - '9000:8080'
+      - '8080:8080'
     depends_on:
       - postgres
 volumes:
