@@ -6,6 +6,7 @@ import com.saivo.recommendo.repository.ClientRepository
 import com.saivo.recommendo.util.createUUID
 import com.saivo.recommendo.util.exception.ClientNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -14,6 +15,9 @@ class ClientService {
 
     @Autowired
     val clientRepository: ClientRepository? = null
+
+    @Autowired
+    private val encoder: PasswordEncoder? = null
 
     fun getClientById(clientId: String): Client {
         return clientRepository!!.findById(clientId).orElseThrow {
@@ -52,7 +56,7 @@ class ClientService {
         return clientRepository!!.save(Client().apply {
             scope = "register"
             clientId = UUID.randomUUID().toString().takeIf { !isClient(it) }
-            clientSecret = secret
+            clientSecret = encoder?.encode(secret.filter { it != '"' })
             resourceIds = System.getenv("RESOURCE_ID")
             accessTokenValidity = 3600
             refreshTokenValidity = 3600
