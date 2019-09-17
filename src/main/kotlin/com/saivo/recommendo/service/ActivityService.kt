@@ -2,6 +2,7 @@ package com.saivo.recommendo.service
 
 import com.saivo.recommendo.model.domain.Activity
 import com.saivo.recommendo.repository.ActivityRepository
+import com.saivo.recommendo.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -10,6 +11,8 @@ class ActivityService {
 
     @Autowired
     val activityRepository: ActivityRepository? = null
+    @Autowired
+    val userRepository: UserRepository? = null
 
     fun addActivity(activity: Activity) {
         activityRepository!!.save(activity)
@@ -17,5 +20,11 @@ class ActivityService {
 
     fun addActivities(activities: ArrayList<Activity>) {
         activities.forEach { activity -> activityRepository!!.save(activity) }
+    }
+
+    fun getAllActivities(email: String): ArrayList<Activity> {
+        var activities = ArrayList<Activity>()
+        userRepository?.findUserByEmail(email)?.recommendations?.forEach { activities.add(it.activity) }
+        return activities
     }
 }
