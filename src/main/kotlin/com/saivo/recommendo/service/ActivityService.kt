@@ -24,7 +24,11 @@ class ActivityService {
 
     fun getAllActivities(email: String): ArrayList<Activity> {
         var activities = ArrayList<Activity>()
-        userRepository?.findUserByEmail(email)?.recommendations?.forEach { activities.add(it.activity) }
+        userRepository?.findUserByEmail(email)?.recommendations?.forEach {
+            activities.add(it.activity)
+            println("${it.activity}")
+        }
+        println("getAllActivities: Returned: [$activities]")
         return activities
     }
 }
