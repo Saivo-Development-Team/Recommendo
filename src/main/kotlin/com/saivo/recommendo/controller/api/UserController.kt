@@ -14,6 +14,9 @@ class UserController {
     @Autowired
     val userService: UserService? = null
 
+    @PostMapping("/api/users")
+    fun addUser(@RequestBody user: User) = userService!!.saveUser(user)
+
     @GetMapping("/api/users")
     fun getUsers(): List<User> = userService!!.getUsers()
 
