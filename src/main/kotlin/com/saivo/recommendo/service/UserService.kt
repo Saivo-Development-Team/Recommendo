@@ -25,7 +25,26 @@ class UserService : UserDetailsService {
     @Autowired
     private val encoder: PasswordEncoder? = null
 
-    fun saveUser(user: User, action: String? = "save"): Response {
+    fun saveUser(user: User, action: String = ""): Response {
+        return when (action) {
+            "register" -> registerUser(user)
+            else -> saveNewUser(user)
+        }
+    }
+
+    fun saveNewUser(user: User): Response {
+        return Response().apply {
+            userRepository!!.save(user.apply {
+                password = encoder!!.encode(password)
+            }).also {
+                data = it.id
+                status = "ADDED NEW USER"
+                message = "${it.firstname} ${it.lastname} Registered with ${it.email}"
+            }
+        }
+    }
+
+    fun registerUser(user: User): Response {
         return Response().apply {
             try {
                 userRepository!!.save(user.apply {
