@@ -31,6 +31,10 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-oauth2")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+	implementation("com.google.maps:google-maps-services:0.10.0")
+	implementation("com.squareup.okhttp3:okhttp:4.2.0")
+	implementation("com.google.code.gson:gson:2.8.5")
+	implementation("com.twilio.sdk:twilio:7.42.0")
 	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
