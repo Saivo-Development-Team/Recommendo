@@ -35,7 +35,7 @@ class UserService : UserDetailsService {
     fun saveNewUser(user: User): Response {
         return Response().apply {
             userRepository!!.save(user.apply {
-                password = encoder!!.encode(password)
+                password = createBycpt(password)
             }).also {
                 data = it.id
                 status = "ADDED NEW USER"
@@ -48,7 +48,7 @@ class UserService : UserDetailsService {
         return Response().apply {
             try {
                 userRepository!!.save(user.apply {
-                    password = encoder!!.encode(password)
+                    password = createBycpt(password)
                 }).also {
                     data = it.id
                     status = "REGISTRATION_SUCCESSFUL"
@@ -124,5 +124,12 @@ class UserService : UserDetailsService {
             encoder!!.matches(password, user.password) -> true
             else -> throw BadUserCredentialsException()
         }
+    }
+
+    fun createBycpt(password: String): String {
+        if (encoder != null) {
+            return encoder.encode(password)
+        }
+        return password
     }
 }

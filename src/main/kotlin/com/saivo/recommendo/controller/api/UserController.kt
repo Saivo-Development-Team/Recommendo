@@ -10,17 +10,18 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/user")
 class UserController {
     @Autowired
     val userService: UserService? = null
 
-    @PostMapping("/api/users")
+    @PostMapping("/add")
     fun addUser(@RequestBody user: User) = userService!!.saveUser(user)
 
-    @GetMapping("/api/users")
+    @GetMapping("/all")
     fun getUsers(): List<User> = userService!!.getUsers()
 
-    @GetMapping("/api/users/{id}")
+    @GetMapping("/{id}")
     fun getUser(@PathVariable id: String): Response {
         return try {
             Response(data = userService!!.getUserById(id), status = "USER_FOUND")
@@ -30,15 +31,15 @@ class UserController {
     }
 
     @ResponseBody
-    @PutMapping("/api/users/{id}")
+    @PutMapping("/update/{id}")
     fun updateUser(@PathVariable id: String, @RequestBody user: User):
             Response = userService!!.saveUser(user, "update")
 
-    @PostMapping("/users/register")
+    @PostMapping("/register")
     @PreAuthorize("#oauth2.hasScope('register')")
     fun registerUser(@RequestBody user: User): Response = userService!!.saveUser(user)
 
-    @PostMapping("/users/login")
+    @PostMapping("/login")
     fun loginUser(@RequestBody login: Login): Response = userService!!.loginUser(login)
 
 }

@@ -11,6 +11,7 @@ class ActivityService {
 
     @Autowired
     val activityRepository: ActivityRepository? = null
+
     @Autowired
     val userRepository: UserRepository? = null
 
@@ -23,7 +24,7 @@ class ActivityService {
     }
 
     fun getAllActivities(email: String): ArrayList<Activity> {
-        var activities = ArrayList<Activity>()
+        val activities = ArrayList<Activity>()
         userRepository?.findUserByEmail(email)?.recommendations?.forEach {
             activities.add(it.activity)
             println("${it.activity}")

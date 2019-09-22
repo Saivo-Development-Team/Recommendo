@@ -12,7 +12,11 @@ class PreferenceService {
     val preferenceRepository: PreferenceRepository? = null
 
     fun addPreference(preference: Preference){
-        preferenceRepository!!.save(preference)
+        preferenceRepository?.save(preference)
+    }
+
+    fun getPreferences(): MutableIterable<Preference>? {
+        return preferenceRepository?.findAll()
     }
 
 }
