@@ -15,6 +15,7 @@ open class User(
         open val enabled: Boolean,
         open val lastname: String,
         open val firstname: String,
+        open val phoneNumber: String = "",
         open val accountNotLocked: Boolean,
         open val accountNotExpired: Boolean,
         open val credentialsNotExpired: Boolean,
