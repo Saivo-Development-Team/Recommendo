@@ -34,26 +34,26 @@ class UserService : UserDetailsService {
 
     fun saveNewUser(user: User): Response {
         return Response().apply {
-            userRepository!!.save(user.apply {
-                password = createBycpt(password)
-            }).also {
-                data = it.id
-                status = "ADDED NEW USER"
-                message = "${it.firstname} ${it.lastname} Registered with ${it.email}"
-            }
+            userRepository
+                    ?.save(user.encodeUserPassword { passwordEncoder(it) })
+                    ?.apply {
+                        data = id
+                        status = "ADDED NEW USER"
+                        message = "$firstname $lastname Registered with $email"
+                    }
         }
     }
 
     fun registerUser(user: User): Response {
         return Response().apply {
             try {
-                userRepository!!.save(user.apply {
-                    password = createBycpt(password)
-                }).also {
-                    data = it.id
-                    status = "REGISTRATION_SUCCESSFUL"
-                    message = "${it.firstname} ${it.lastname} Registered with ${it.email}"
-                }
+                userRepository
+                        ?.save(user.encodeUserPassword { passwordEncoder(it) })
+                        ?.apply {
+                            data = id
+                            status = "REGISTRATION_SUCCESSFUL"
+                            message = "$firstname $lastname Registered with $email"
+                        }
             } catch (e: Exception) {
                 status = "REGISTRATION_UNSUCCESSFUL"
                 when (e) {
@@ -67,16 +67,26 @@ class UserService : UserDetailsService {
     }
 
     fun getUserById(id: String): User {
-        return userRepository!!.findById(id).orElseThrow {
-            UserNotFoundException()
+        return when {
+            userRepository != null -> {
+                return userRepository
+                        .findById(id)
+                        .orElseThrow { UserNotFoundException() }
+            }
+            else -> Any() as User
         }
     }
 
     fun getUsers(): List<User> {
-        return userRepository!!.findAll().toList().also {
-            if (it.isNullOrEmpty()) {
-                throw EmptyResultException()
-            }
+        return when {
+            userRepository != null -> return userRepository
+                    .findAll()
+                    .toList().apply {
+                        if (isNullOrEmpty()) {
+                            throw EmptyResultException()
+                        }
+                    }
+            else -> emptyList()
         }
     }
 
@@ -84,23 +94,22 @@ class UserService : UserDetailsService {
         return AuthUser(getUserByUsername(email))
     }
 
-    fun getUserByUsername(email: String): User {
-        userRepository!!.findUserByEmail(email).let {
-            return when {
-                it != null -> it
-                else -> throw UserNotFoundException()
+    fun getUserByUsername(email: String): User = userRepository
+            ?.findUserByEmail(email).run {
+                return when {
+                    this != null -> this
+                    else -> throw UserNotFoundException()
+                }
             }
-        }
-    }
 
     fun loginUser(login: Login): Response {
         return Response().apply {
             try {
-                getUserByUsername(login.email).let {
-                    if (checkUserPassword(it, login.password)) {
-                        data = it
+                getUserByUsername(login.email).run {
+                    if (checkUserPassword(this, login.password)) {
+                        data = this
                         status = "LOGIN_SUCCESSFUL"
-                        message = "${it.firstname} ${it.lastname} has Logged In"
+                        message = "$firstname $lastname has Logged In"
                     }
                 }
             } catch (e: Exception) {
@@ -121,15 +130,18 @@ class UserService : UserDetailsService {
 
     fun checkUserPassword(user: User, password: String): Boolean {
         return when {
-            encoder!!.matches(password, user.password) -> true
-            else -> throw BadUserCredentialsException()
+            encoder != null -> encoder.matches(password, user.password)
+                    .also {
+                        if (!it) throw BadUserCredentialsException()
+                    }
+            else -> false
         }
     }
 
-    fun createBycpt(password: String): String {
-        if (encoder != null) {
-            return encoder.encode(password)
+    fun passwordEncoder(password: String): String {
+        return when {
+            encoder != null -> encoder.encode(password)
+            else -> password
         }
-        return password
     }
 }
