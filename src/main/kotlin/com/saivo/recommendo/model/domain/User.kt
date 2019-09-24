@@ -23,7 +23,7 @@ open class User(
         @get:JvmName("_password")
         @Column(name = "password", nullable = false)
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-        var password: String,
+        val password: String,
 
         @OrderColumn
         @OneToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Role::class)
@@ -36,4 +36,21 @@ open class User(
         @OrderColumn
         @ManyToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Recommendation::class)
         open val recommendations: Set<Recommendation>
-) : WithId()
+) : WithId() {
+
+    fun encodeUserPassword(encode: (password: String) -> String): User {
+        return User(
+                email = email,
+                roles = roles,
+                enabled = enabled,
+                password = encode(password),
+                lastname = lastname,
+                firstname = firstname,
+                preferences = preferences,
+                accountNotLocked = accountNotLocked,
+                accountNotExpired = accountNotExpired,
+                recommendations = recommendations,
+                credentialsNotExpired = credentialsNotExpired
+        )
+    }
+}
