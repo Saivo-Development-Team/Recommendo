@@ -10,7 +10,7 @@ class AuthUser(user: User) : User(
         email = user.email,
         roles = user.roles,
         enabled = user.enabled,
-        password = user.password,
+        pass = user.pass,
         lastname = user.lastname,
         firstname = user.firstname,
         preferences = user.preferences,
@@ -22,8 +22,8 @@ class AuthUser(user: User) : User(
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val grants = arrayListOf<GrantedAuthority>()
-        super.roles.forEach { role ->
-            grants.add(SimpleGrantedAuthority(role.role_type) as GrantedAuthority)
+        super.roles.forEach {
+            grants += SimpleGrantedAuthority(it.role_type) as GrantedAuthority
         }
         return grants
     }
@@ -41,7 +41,7 @@ class AuthUser(user: User) : User(
     }
 
     override fun getPassword(): String {
-        return super.password
+        return super.pass
     }
 
     override fun isAccountNonExpired(): Boolean {

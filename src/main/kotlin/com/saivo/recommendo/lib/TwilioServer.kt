@@ -6,6 +6,10 @@ import com.twilio.type.PhoneNumber
 
 object TwilioServer {
 
+    private val TWILIO_NUMBER: String = System.getenv("TWILIO_NUMBER")
+    private val TWILIO_USERNAME: String = System.getenv("TWILIO_USERNAME")
+    private val TWILIO_PASSWORD: String = System.getenv("TWILIO_PASSWORD")
+
     init {
         Twilio.init(getUsername(), getPassword())
     }
@@ -19,14 +23,14 @@ object TwilioServer {
     }
 
     private fun getSystemNumber(): PhoneNumber {
-        return PhoneNumber(System.getenv("TWILIO_NUMBER"))
+        return PhoneNumber(TWILIO_NUMBER)
     }
 
     private fun getUsername(): String? {
-        return System.getenv("TWILIO_USERNAME")
+        return TWILIO_USERNAME
     }
 
     private fun getPassword(): String? {
-        return System.getenv("TWILIO_PASSWORD")
+        return TWILIO_PASSWORD
     }
 }

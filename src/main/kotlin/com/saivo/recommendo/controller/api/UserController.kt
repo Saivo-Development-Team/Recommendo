@@ -16,7 +16,7 @@ class UserController {
     val userService: UserService? = null
 
     @PostMapping("/add")
-    fun addUser(@RequestBody user: User) = userService!!.saveUser(user)
+    fun addUser(@RequestBody user: User) = userService?.saveUser(user)
 
     @GetMapping("/all")
     fun getUsers(): List<User> = userService!!.getUsers()
@@ -33,13 +33,22 @@ class UserController {
     @ResponseBody
     @PutMapping("/update/{id}")
     fun updateUser(@PathVariable id: String, @RequestBody user: User):
-            Response = userService!!.saveUser(user, "update")
+            Response? = userService?.saveUser(user, "update")
+
+    @PostMapping("/login")
+    fun loginUser(@RequestBody login: Login): Response? = userService?.loginUser(login)
 
     @PostMapping("/register")
     @PreAuthorize("#oauth2.hasScope('register')")
-    fun registerUser(@RequestBody user: User): Response = userService!!.saveUser(user)
+    fun registerUser(@RequestBody user: User): Response? = userService?.saveUser(user)
 
-    @PostMapping("/login")
-    fun loginUser(@RequestBody login: Login): Response = userService!!.loginUser(login)
+    @PostMapping("/reset-password/{email}")
+    fun resetUserPassword(@RequestBody password: String, @PathVariable email: String) {
+        userService?.resetPassword(email, password)
+    }
+
+    @PostMapping("/otp/{email}")
+    fun getSendUserOTP(@RequestBody number: String, @PathVariable email: String): String?
+            = userService?.sendUserSMS(email, number)
 
 }

@@ -20,10 +20,9 @@ open class User(
         open val accountNotExpired: Boolean,
         open val credentialsNotExpired: Boolean,
 
-        @get:JvmName("_password")
         @Column(name = "password", nullable = false)
         @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-        val password: String,
+        open val pass: String,
 
         @OrderColumn
         @OneToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Role::class)
@@ -38,12 +37,12 @@ open class User(
         open val recommendations: Set<Recommendation>
 ) : WithId() {
 
-    fun encodeUserPassword(encode: (password: String) -> String): User {
+    fun encodeUserPassword(encode: () -> String): User {
         return User(
                 email = email,
                 roles = roles,
                 enabled = enabled,
-                password = encode(password),
+                pass = encode(),
                 lastname = lastname,
                 firstname = firstname,
                 preferences = preferences,

@@ -1,5 +1,6 @@
 package com.saivo.recommendo.service
 
+import com.saivo.recommendo.lib.TwilioServer
 import com.saivo.recommendo.model.domain.User
 import com.saivo.recommendo.model.infrastructure.AuthUser
 import com.saivo.recommendo.model.objects.Response
@@ -14,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 
 @Service
@@ -34,26 +37,26 @@ class UserService : UserDetailsService {
 
     fun saveNewUser(user: User): Response {
         return Response().apply {
-            userRepository
-                    ?.save(user.encodeUserPassword { passwordEncoder(it) })
-                    ?.apply {
-                        data = id
-                        status = "ADDED NEW USER"
-                        message = "$firstname $lastname Registered with $email"
-                    }
+            user.apply {
+                userRepository?.save(encodeUserPassword { passwordEncoder(pass) })?.apply {
+                    data = id
+                    status = "ADDED NEW USER"
+                    message = "$firstname $lastname Registered with $email"
+                }
+            }
         }
     }
 
     fun registerUser(user: User): Response {
         return Response().apply {
             try {
-                userRepository
-                        ?.save(user.encodeUserPassword { passwordEncoder(it) })
-                        ?.apply {
-                            data = id
-                            status = "REGISTRATION_SUCCESSFUL"
-                            message = "$firstname $lastname Registered with $email"
-                        }
+                user.apply {
+                    userRepository?.save(encodeUserPassword { passwordEncoder(pass) })?.apply {
+                        data = id
+                        status = "REGISTRATION_SUCCESSFUL"
+                        message = "$firstname $lastname Registered with $email"
+                    }
+                }
             } catch (e: Exception) {
                 status = "REGISTRATION_UNSUCCESSFUL"
                 when (e) {
@@ -96,10 +99,11 @@ class UserService : UserDetailsService {
 
     fun getUserByUsername(email: String): User = userRepository
             ?.findUserByEmail(email).run {
-                return when {
-                    this != null -> this
-                    else -> throw UserNotFoundException()
-                }
+                return this ?: throw UserNotFoundException()
+//                return when {
+//                    this != null -> this
+//                    else -> throw UserNotFoundException()
+//                }
             }
 
     fun loginUser(login: Login): Response {
@@ -130,7 +134,7 @@ class UserService : UserDetailsService {
 
     fun checkUserPassword(user: User, password: String): Boolean {
         return when {
-            encoder != null -> encoder.matches(password, user.password)
+            encoder != null -> encoder.matches(password, user.pass)
                     .also {
                         if (!it) throw BadUserCredentialsException()
                     }
@@ -143,5 +147,18 @@ class UserService : UserDetailsService {
             encoder != null -> encoder.encode(password)
             else -> password
         }
+    }
+
+    fun resetPassword(email: String, password: String) {
+        saveUser(getUserByUsername(email).encodeUserPassword {
+            passwordEncoder(password)
+        })
+    }
+
+    fun sendUserSMS(email: String, number: String): String {
+        var otp = ""
+        for (i in 1..5) otp += Random.nextInt(1,9)
+        TwilioServer.sendSms("You're PIN is: $otp", number)
+        return otp
     }
 }
