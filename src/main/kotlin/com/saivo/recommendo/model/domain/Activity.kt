@@ -1,13 +1,13 @@
 package com.saivo.recommendo.model.domain
 
 import com.saivo.recommendo.model.infrastructure.WithId
+import java.io.Serializable
 import javax.validation.constraints.Size
 import javax.persistence.*
 
 @Entity
 @Table(name = "activity")
 data class Activity(
-
         @Size(max = 160)
         val title: String,
         val location: String,
@@ -17,4 +17,4 @@ data class Activity(
         @OrderColumn
         @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], targetEntity = Rating::class)
         val ratings: Set<Rating>
-) : WithId()
+) : WithId(), Serializable

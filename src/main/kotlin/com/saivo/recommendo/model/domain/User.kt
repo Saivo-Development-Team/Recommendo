@@ -1,55 +1,96 @@
 package com.saivo.recommendo.model.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonSetter
 import com.saivo.recommendo.model.infrastructure.Role
 import com.saivo.recommendo.model.infrastructure.WithId
+import com.saivo.recommendo.model.objects.ProfileImage
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
+import java.io.Serializable
 import javax.persistence.*
 import javax.persistence.CascadeType.*
 
 
 @Entity
 @Table(name = "users")
-open class User(
+data class User(
         @Column(name = "email", nullable = false, unique = true)
-        open val email: String,
-        open val enabled: Boolean,
-        open val lastname: String,
-        open val firstname: String,
-        open val phoneNumber: String = "",
-        open val accountNotLocked: Boolean,
-        open val accountNotExpired: Boolean,
-        open val credentialsNotExpired: Boolean,
+        val email: String,
+        val enabled: Boolean,
+        val lastname: String,
+        val firstname: String,
+        val phoneNumber: String? = null,
+        val profileImageLink: String? = null,
+        val accountNotLocked: Boolean,
+        val accountNotExpired: Boolean,
+        val credentialsNotExpired: Boolean,
 
         @Column(name = "password", nullable = false)
-        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-        open val pass: String,
+        @JsonProperty("password", access = JsonProperty.Access.WRITE_ONLY)
+        val userPassword: String,
+
+        @JsonIgnore
+        @OneToOne(targetEntity = ProfileImage::class)
+        val profileImage: ProfileImage? = null,
 
         @OrderColumn
         @OneToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Role::class)
-        open val roles: Set<Role>,
+        val roles: Set<Role>,
 
         @OrderColumn
         @ManyToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Preference::class)
-        open val preferences: Set<Preference>,
+        val preferences: Set<Preference>,
 
         @OrderColumn
         @ManyToMany(fetch = FetchType.EAGER, cascade = [ALL], targetEntity = Recommendation::class)
-        open val recommendations: Set<Recommendation>
-) : WithId() {
+        val recommendations: Set<Recommendation>
+) : WithId(), UserDetails, Serializable {
 
-    fun encodeUserPassword(encode: () -> String): User {
-        return User(
-                email = email,
-                roles = roles,
-                enabled = enabled,
-                pass = encode(),
-                lastname = lastname,
-                firstname = firstname,
-                preferences = preferences,
-                accountNotLocked = accountNotLocked,
-                accountNotExpired = accountNotExpired,
-                recommendations = recommendations,
-                credentialsNotExpired = credentialsNotExpired
-        )
+    @JsonIgnore
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
+        val grants = arrayListOf<GrantedAuthority>()
+        this.roles.forEach {
+            grants += SimpleGrantedAuthority(it.role_type) as GrantedAuthority
+        }
+        return grants
     }
+
+    @JsonIgnore
+    override fun isEnabled(): Boolean {
+        return this.enabled
+    }
+
+    @JsonIgnore
+    override fun getUsername(): String {
+        return this.email
+    }
+
+    @JsonIgnore
+    override fun isCredentialsNonExpired(): Boolean {
+        return this.credentialsNotExpired
+    }
+
+    @JsonIgnore
+    override fun getPassword(): String {
+        return this.userPassword
+    }
+
+    @JsonIgnore
+    override fun isAccountNonExpired(): Boolean {
+        return this.accountNotExpired
+    }
+
+    @JsonIgnore
+    override fun isAccountNonLocked(): Boolean {
+        return this.accountNotLocked
+    }
+
+    @JsonIgnore
+    fun encodeUserPassword(encode: () -> String): User {
+        return this.copy(userPassword = encode())
+    }
+
 }

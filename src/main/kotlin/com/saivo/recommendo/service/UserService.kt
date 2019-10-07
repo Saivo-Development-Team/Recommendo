@@ -2,7 +2,6 @@ package com.saivo.recommendo.service
 
 import com.saivo.recommendo.lib.TwilioServer
 import com.saivo.recommendo.model.domain.User
-import com.saivo.recommendo.model.infrastructure.AuthUser
 import com.saivo.recommendo.model.objects.Response
 import com.saivo.recommendo.model.objects.Login
 import com.saivo.recommendo.repository.UserRepository
@@ -16,17 +15,16 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 
 @Service
 class UserService : UserDetailsService {
 
     @Autowired
-    private val userRepository: UserRepository? = null
+    private lateinit var userRepository: UserRepository
 
     @Autowired
-    private val encoder: PasswordEncoder? = null
+    private lateinit var encoder: PasswordEncoder
 
     fun saveUser(user: User, action: String = ""): Response {
         return when (action) {
@@ -38,7 +36,7 @@ class UserService : UserDetailsService {
     fun saveNewUser(user: User): Response {
         return Response().apply {
             user.apply {
-                userRepository?.save(encodeUserPassword { passwordEncoder(pass) })?.apply {
+                userRepository.save(encodeUserPassword { passwordEncoder(userPassword) }).apply {
                     data = id
                     status = "ADDED NEW USER"
                     message = "$firstname $lastname Registered with $email"
@@ -51,7 +49,7 @@ class UserService : UserDetailsService {
         return Response().apply {
             try {
                 user.apply {
-                    userRepository?.save(encodeUserPassword { passwordEncoder(pass) })?.apply {
+                    userRepository.save(encodeUserPassword { passwordEncoder(userPassword) }).apply {
                         data = id
                         status = "REGISTRATION_SUCCESSFUL"
                         message = "$firstname $lastname Registered with $email"
@@ -70,40 +68,25 @@ class UserService : UserDetailsService {
     }
 
     fun getUserById(id: String): User {
-        return when {
-            userRepository != null -> {
-                return userRepository
-                        .findById(id)
-                        .orElseThrow { UserNotFoundException() }
-            }
-            else -> Any() as User
-        }
+        return userRepository.findById(id).orElseThrow { UserNotFoundException() }
+
     }
 
     fun getUsers(): List<User> {
-        return when {
-            userRepository != null -> return userRepository
-                    .findAll()
-                    .toList().apply {
-                        if (isNullOrEmpty()) {
-                            throw EmptyResultException()
-                        }
-                    }
-            else -> emptyList()
+        return userRepository.findAll().toList().apply {
+            if (isNullOrEmpty()) {
+                throw EmptyResultException()
+            }
         }
     }
 
     override fun loadUserByUsername(email: String): UserDetails {
-        return AuthUser(getUserByUsername(email))
+        return getUserByUsername(email)
     }
 
     fun getUserByUsername(email: String): User = userRepository
-            ?.findUserByEmail(email).run {
+            .findUserByEmail(email).run {
                 return this ?: throw UserNotFoundException()
-//                return when {
-//                    this != null -> this
-//                    else -> throw UserNotFoundException()
-//                }
             }
 
     fun loginUser(login: Login): Response {
@@ -133,20 +116,14 @@ class UserService : UserDetailsService {
     }
 
     fun checkUserPassword(user: User, password: String): Boolean {
-        return when {
-            encoder != null -> encoder.matches(password, user.pass)
-                    .also {
-                        if (!it) throw BadUserCredentialsException()
-                    }
-            else -> false
-        }
+        return encoder.matches(password, user.userPassword)
+                .also {
+                    if (!it) throw BadUserCredentialsException()
+                }
     }
 
     fun passwordEncoder(password: String): String {
-        return when {
-            encoder != null -> encoder.encode(password)
-            else -> password
-        }
+        return encoder.encode(password)
     }
 
     fun resetPassword(email: String, password: String) {
@@ -157,7 +134,7 @@ class UserService : UserDetailsService {
 
     fun sendUserSMS(email: String, number: String): String {
         var otp = ""
-        for (i in 1..5) otp += Random.nextInt(1,9)
+        for (i in 1..5) otp += Random.nextInt(1, 9)
         TwilioServer.sendSms("You're PIN is: $otp", number)
         return otp
     }

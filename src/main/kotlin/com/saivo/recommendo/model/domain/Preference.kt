@@ -1,6 +1,7 @@
 package com.saivo.recommendo.model.domain
 
 import com.saivo.recommendo.model.infrastructure.WithId
+import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -19,4 +20,4 @@ data class Preference(
 
         @Size(max = 500)
         val description: String
-) : WithId()
+) : WithId(), Serializable

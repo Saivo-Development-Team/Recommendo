@@ -1,5 +1,6 @@
 package com.saivo.recommendo.model.infrastructure
 
+import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -10,4 +11,4 @@ import javax.persistence.Table
 class Role(
         @Column(name = "role", unique = true, nullable = false, updatable = false)
         val role_type: String? = null // e.g USER, ADMIN, CLIENT, id: String?
-) : WithId()
+) : WithId(), Serializable
