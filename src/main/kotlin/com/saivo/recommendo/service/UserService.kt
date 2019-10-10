@@ -132,10 +132,23 @@ class UserService : UserDetailsService {
         })
     }
 
-    fun sendUserSMS(email: String, number: String): String {
+    fun sendUserSMS(email: String, number: String): Response {
         var otp = ""
-        for (i in 1..5) otp += Random.nextInt(1, 9)
-        TwilioServer.sendSms("You're PIN is: $otp", number)
-        return otp
+        for (i in 1..5) {
+            otp += Random.nextInt(1, 9)
+        }
+        return Response().apply {
+            runCatching {
+                getUserByUsername(email)
+            }.onSuccess {
+                message = "Sent OTP"
+                data = otp
+                TwilioServer.sendSms("You're PIN is: $data", number)
+            }.onFailure {
+                data = "error"
+                error = "USER_NOTFOUND"
+                message = it.message.toString()
+            }
+        }
     }
 }

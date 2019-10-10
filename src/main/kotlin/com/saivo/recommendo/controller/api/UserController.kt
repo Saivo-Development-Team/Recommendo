@@ -55,7 +55,7 @@ class UserController {
     }
 
     @PostMapping("/otp/{email}")
-    fun getSendUserOTP(@RequestBody number: String, @PathVariable email: String): String? = userService.sendUserSMS(email, number)
+    fun getSendUserOTP(@RequestBody number: String, @PathVariable email: String): Response = userService.sendUserSMS(email, number)
 
     @PostMapping("/upload/{Id}/profile")
     fun uploadUserImage(@RequestParam("image") image: MultipartFile, @PathVariable Id: String) {
