@@ -23,7 +23,7 @@ class UserController {
     lateinit var profileImageService: ProfileImageService
 
     @PostMapping("/add")
-    fun addUser(@RequestBody user: User) = userService.saveUser(user)
+    fun addUser(@RequestBody user: User) = userService.save(user)
 
     @GetMapping("/all")
     fun getUsers(): List<User> = userService.getUsers()
@@ -39,23 +39,21 @@ class UserController {
 
     @ResponseBody
     @PutMapping("/update/{Id}")
-    fun updateUser(@PathVariable Id: String, @RequestBody user: User):
-            Response? = userService.saveUser(user, "update")
+    fun updateUser(@PathVariable Id: String, @RequestBody user: User) = userService.save(user, "UPDATE")
 
     @PostMapping("/login")
-    fun loginUser(@RequestBody login: Login): Response? = userService.loginUser(login)
+    fun loginUser(@RequestBody login: Login) = userService.loginUser(login)
 
     @PostMapping("/register")
     @PreAuthorize("#oauth2.hasScope('register')")
-    fun registerUser(@RequestBody user: User): Response? = userService.saveUser(user)
+    fun registerUser(@RequestBody user: User) = userService.save(user)
 
     @PostMapping("/reset-password/{email}")
-    fun resetUserPassword(@RequestBody password: String, @PathVariable email: String) {
-        userService.resetPassword(email, password)
-    }
+    fun resetUserPassword(@RequestBody password: String, @PathVariable email: String) =
+            userService.save(userService.getUserByUsername(email).copy(userPassword = password), "RESET_PASSWORD")
 
     @PostMapping("/otp/{email}")
-    fun getSendUserOTP(@RequestBody number: String, @PathVariable email: String): Response = userService.sendUserSMS(email, number)
+    fun getSendUserOTP(@RequestBody number: String, @PathVariable email: String) = userService.sendUserSMS(email, number)
 
     @PostMapping("/upload/{Id}/profile")
     fun uploadUserImage(@RequestParam("image") image: MultipartFile, @PathVariable Id: String) {

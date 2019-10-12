@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/preference")
 class PreferenceController {
-    @Autowired
-    val preferenceService: PreferenceService? = null
+  @Autowired
+  lateinit var preferenceService: PreferenceService
 
-    @GetMapping("/all")
-    fun getPreference(): MutableIterable<Preference>? {
-        return preferenceService?.getPreferences()
-    }
+  @GetMapping("/all")
+  fun getPreference(): MutableIterable<Preference>? {
+    return preferenceService.getPreferences()
+  }
 
-    @PostMapping("/add")
-    fun addPreference(@RequestBody preference: Preference) {
-        preferenceService?.addPreference(preference)
-    }
+  @PostMapping("/add")
+  fun addPreference(@RequestBody preference: Preference) {
+    preferenceService.addPreference(preference)
+  }
 }

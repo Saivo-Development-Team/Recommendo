@@ -14,9 +14,7 @@ object TwilioServer {
         Twilio.init(getUsername(), getPassword())
     }
 
-    fun sendSms(message: String, number: String): String {
-        return createMessage(message, number).status.name
-    }
+    fun sendSms(message: String, number: String) = createMessage(message, number).status.name
 
     private fun createMessage(message: String, number: String): Message {
         return Message.creator(PhoneNumber(number), getSystemNumber(), message).create()

@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/recommendation")
 class RecommendationController {
     @Autowired
-    val activityService: ActivityService? = null
+    lateinit var activityService: ActivityService
 
     @Autowired
-    val placeRepository: PlaceRepository? = null
+    lateinit var placeRepository: PlaceRepository
 
     @GetMapping("/activities")
     fun getUserActivities(@PathVariable email: String): ArrayList<Activity>? {
-        return activityService?.getAllActivities(email)
+        return activityService.getAllActivities(email)
     }
     
 }
