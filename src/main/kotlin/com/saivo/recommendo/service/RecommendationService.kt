@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service
 class RecommendationService {
 
     @Autowired
-    val recommendationRepository: RecommendationRepository? = null
+    lateinit var recommendationRepository: RecommendationRepository
 
     fun addRecommendation(recommendation: Recommendation) {
-        recommendationRepository!!.save(recommendation)
+        recommendationRepository.save(recommendation)
     }
 }

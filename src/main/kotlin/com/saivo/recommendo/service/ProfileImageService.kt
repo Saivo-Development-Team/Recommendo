@@ -8,27 +8,27 @@ import org.springframework.stereotype.Service
 
 @Service
 class ProfileImageService {
-    @Autowired
-    val profileImageRepository: ProfileImageRepository? = null
+  @Autowired
+  lateinit var profileImageRepository: ProfileImageRepository
 
-    @Autowired
-    val userRepository: UserRepository? = null
+  @Autowired
+  lateinit var userRepository: UserRepository
 
-    fun save(profileImage: ProfileImage) {
-        profileImageRepository?.save(profileImage)?.fileName
+  fun save(profileImage: ProfileImage) {
+    profileImageRepository.save(profileImage).fileName
+  }
+
+  fun update(profileImage: ProfileImage) = profileImageRepository.save(profileImage)
+
+  fun saveUserImage(id: String, profileImage: ProfileImage) {
+    profileImageRepository.save(profileImage)
+    userRepository.apply {
+      findById(id).ifPresent {
+        save(it.copy(
+                profileImageLink = "/user/$id/profile/$profileImage.fileName",
+                profileImage = profileImage)
+        )
+      }
     }
-
-    fun update(profileImage: ProfileImage) = profileImageRepository?.save(profileImage)
-
-    fun saveUserImage(id: String, profileImage: ProfileImage) {
-        profileImageRepository?.save(profileImage)
-        userRepository?.apply {
-            findById(id).ifPresent {
-                save(it.copy(
-                        profileImageLink = "/user/$id/profile/$profileImage.fileName",
-                        profileImage = profileImage)
-                )
-            }
-        }
-    }
+  }
 }

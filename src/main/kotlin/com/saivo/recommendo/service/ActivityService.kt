@@ -10,22 +10,20 @@ import org.springframework.stereotype.Service
 class ActivityService {
 
     @Autowired
-    val activityRepository: ActivityRepository? = null
+    private lateinit var activityRepository: ActivityRepository
 
     @Autowired
-    val userRepository: UserRepository? = null
+    private lateinit var userRepository: UserRepository
 
-    fun addActivity(activity: Activity) {
-        activityRepository!!.save(activity)
-    }
+    fun addActivity(activity: Activity) = activityRepository.save(activity)
 
     fun addActivities(activities: ArrayList<Activity>) {
-        activities.forEach { activity -> activityRepository!!.save(activity) }
+        activities.forEach { activity -> activityRepository.save(activity) }
     }
 
     fun getAllActivities(email: String): ArrayList<Activity> {
         val activities = ArrayList<Activity>()
-        userRepository?.findUserByEmail(email)?.recommendations?.forEach {
+        userRepository.findUserByEmail(email)?.recommendations?.forEach {
             activities.add(it.activity)
             println("${it.activity}")
         }

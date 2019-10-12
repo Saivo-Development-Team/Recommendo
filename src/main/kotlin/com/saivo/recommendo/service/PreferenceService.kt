@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service
 class PreferenceService {
 
     @Autowired
-    val preferenceRepository: PreferenceRepository? = null
+    lateinit var preferenceRepository: PreferenceRepository
 
     fun addPreference(preference: Preference){
-        preferenceRepository?.save(preference)
+        preferenceRepository.save(preference)
     }
 
     fun getPreferences(): MutableIterable<Preference>? {
-        return preferenceRepository?.findAll()
+        return preferenceRepository.findAll()
     }
 
 }
