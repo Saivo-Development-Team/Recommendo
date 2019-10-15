@@ -1,5 +1,6 @@
 package com.saivo.recommendo.service
 
+import com.saivo.recommendo.model.domain.Option
 import com.saivo.recommendo.model.domain.Preference
 import com.saivo.recommendo.model.infrastructure.Opinion
 import com.saivo.recommendo.model.objects.Response
@@ -61,19 +62,37 @@ class PreferenceService {
       runCatching {
         userService.getUserByEmail(email).preferences
       }.onSuccess {
-        data = opinionFromPreferences(it ?: setOf())
+        data = (it ?: setOf()).toOpinions().apply {
+          println(this)
+        }
         status = "SUCCESS"
         message = "Got Preferences for User with [$email]"
       }
     }
   }
 
-  fun opinionFromPreferences(preferences: Set<Preference>): Set<Opinion> {
-    var data: Set<Opinion> = setOf()
-    preferences.forEach { p ->
-      data = setOf(Preference.invoke(p))
+  fun Set<Preference>.toOpinions(): List<Opinion> {
+    return this.map {
+      it.toOpinion()
     }
-    return data
   }
+}
 
+fun Preference.toOpinion(): Opinion {
+  return Opinion(
+    id = this.id,
+    likes = this.likes.value,
+    dislikes = this.dislikes.value,
+    category = this.category.name,
+    description = this.description
+  )
+}
+
+fun Opinion.toPreference(): Preference {
+  return Preference(
+    likes = Option.Like(this.likes),
+    dislikes = Option.Dislike(this.dislikes),
+    category = Option.Category(this.category),
+    description = this.description
+  )
 }
