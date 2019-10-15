@@ -50,7 +50,7 @@ class UserController {
 
     @PostMapping("/reset-password/{email}")
     fun resetUserPassword(@RequestBody password: String, @PathVariable email: String) =
-            userService.save(userService.getUserByUsername(email).copy(userPassword = password), "RESET_PASSWORD")
+            userService.save(userService.getUserByEmail(email).copy(userPassword = password), "RESET_PASSWORD")
 
     @PostMapping("/otp/{email}")
     fun getSendUserOTP(@RequestBody number: String, @PathVariable email: String) = userService.sendUserSMS(email, number)
