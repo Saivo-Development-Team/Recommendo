@@ -27,18 +27,18 @@ class UserService : UserDetailsService {
 
   fun save(user: User, action: String = ""): Response {
     return when (action) {
-      "UPDATE" -> updateUser(user)
-      "RESET_PASSWORD" -> resetUserPassword(user)
-      else -> saveUser(user)
+      "UPDATE" -> update(user)
+      "RESET_PASSWORD" -> resetPassword(user)
+      else -> register(user)
     }
   }
 
-  private fun saveUser(user: User): Response {
+  private fun register(user: User): Response {
     return Response().apply {
       with(userRepository) {
         findUserByEmail(user.email).let {
           if (it?.email == null) {
-            save(user).apply {
+            save(user.encode(::passwordEncoder)).apply {
               data = id
               status = "REGISTRATION_SUCCESSFUL"
               message = "$firstname $lastname Registered with $email"
@@ -53,12 +53,10 @@ class UserService : UserDetailsService {
     }
   }
 
-  private fun resetUserPassword(user: User): Response {
+  private fun resetPassword(user: User): Response {
     return Response().apply {
       with(userRepository) {
-        deleteUser(user.email)
-        val password = user.userPassword.replace('"', ' ').trim()
-        save(user.copy(userPassword = passwordEncoder(password)))
+        save(user.encode(::passwordEncoder))
       }.let {
         data = it.id
         status = "RESET_USER_PASSWORD"
@@ -67,30 +65,20 @@ class UserService : UserDetailsService {
     }
   }
 
-  private fun updateUser(user: User): Response {
+  private fun update(user: User): Response {
     return Response().apply {
-      getUserByUsername(user.email).also {
-        with(userRepository) {
-          deleteUser(user.email)
-          save(user)
-        }.let {
-          data = it.id
-          status = "USER_UPDATED"
-          message = "${it.firstname} ${it.lastname} you have updated your information"
-        }
+      with(userRepository) {
+        save(user.updated(user))
+      }.let {
+        data = it.id
+        status = "USER_UPDATED"
+        message = "${it.firstname} ${it.lastname} you have updated your information"
       }
-    }
-  }
-
-  fun deleteUser(email: String) {
-    with(userRepository) {
-      findUserByEmail(email)?.id?.let { deleteById(it) }
     }
   }
 
   fun getUserById(Id: String): User {
     return userRepository.findById(Id).orElseThrow { UserNotFoundException() }
-
   }
 
   fun getUsers(): List<User> {
@@ -102,27 +90,29 @@ class UserService : UserDetailsService {
   }
 
   override fun loadUserByUsername(email: String): UserDetails {
-    return getUserByUsername(email)
+    return getUserByEmail(email)
   }
 
-  fun getUserByUsername(email: String): User = userRepository
-          .findUserByEmail(email).run {
-            return this ?: throw UserNotFoundException()
-          }
+  fun getUserByEmail(email: String): User = userRepository
+    .findUserByEmail(email).run {
+      return this ?: throw UserNotFoundException()
+    }
 
   fun loginUser(login: Login): Response {
     return Response().apply {
-      try {
-        getUserByUsername(login.email).run {
+      runCatching {
+        getUserByEmail(login.email).apply {
           if (checkUserPassword(this, login.password)) {
-            data = this
-            status = "LOGIN_SUCCESSFUL"
-            message = "$firstname $lastname has Logged In"
+            return@runCatching this
           }
         }
-      } catch (e: Exception) {
+      }.onSuccess {
+        data = it
+        status = "LOGIN_SUCCESSFUL"
+        message = "${it.firstname} ${it.lastname} has Logged In"
+      }.onFailure {
         status = "LOGIN_UNSUCCESSFUL"
-        when (e) {
+        when (it) {
           is UserNotFoundException -> {
             error = "USER_NOT_FOUND"
             message = "Try Registering"
@@ -149,7 +139,7 @@ class UserService : UserDetailsService {
   fun sendUserSMS(email: String, number: String): Response {
     return Response().apply {
       runCatching {
-        getUserByUsername(email)
+        getUserByEmail(email)
       }.onSuccess {
         doSendSms(makeOtp(), number, email)
       }.onFailure {
