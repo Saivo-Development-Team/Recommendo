@@ -13,18 +13,19 @@ import org.springframework.security.oauth2.provider.token.TokenStore
 @Configuration
 class ResourceSecurityConfiguration : ResourceServerConfigurerAdapter() {
 
-    @Autowired
-    private val tokenStore: TokenStore? = null
+  @Autowired
+  private lateinit var tokenStore: TokenStore
 
-    override fun configure(http: HttpSecurity?) {
-        http!!.authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/clients/register").permitAll()
-                .antMatchers(HttpMethod.POST,"/user/**").authenticated()
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/**").permitAll()
-    }
+  override fun configure(http: HttpSecurity?) {
+    http!!.authorizeRequests()
+      .antMatchers(HttpMethod.POST, "/clients/register").permitAll()
+      .antMatchers("/preference/**").authenticated()
+      .antMatchers("/user/**").authenticated()
+      .antMatchers("/api/**").authenticated()
+      .antMatchers("/**").permitAll()
+  }
 
-    override fun configure(resources: ResourceServerSecurityConfigurer) {
-        resources.tokenStore(tokenStore).resourceId(System.getenv("RESOURCE_ID"))
-    }
+  override fun configure(resources: ResourceServerSecurityConfigurer) {
+    resources.tokenStore(tokenStore).resourceId(System.getenv("RESOURCE_ID"))
+  }
 }
