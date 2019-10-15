@@ -14,40 +14,40 @@ import org.springframework.security.oauth2.provider.token.TokenStore
 import javax.sql.DataSource
 
 @Configuration
-class AuthConfiguration: AuthorizationServerConfigurerAdapter() {
+class AuthConfiguration : AuthorizationServerConfigurerAdapter() {
 
-    @Autowired
-    private val dataSource: DataSource? = null
+  @Autowired
+  private lateinit var dataSource: DataSource
 
-    @Autowired
-    private val tokenStore: TokenStore? = null
+  @Autowired
+  private lateinit var tokenStore: TokenStore
 
-    @Autowired
-    private val encoder: PasswordEncoder? = null
+  @Autowired
+  private lateinit var encoder: PasswordEncoder
 
-    @Autowired
-    private val approval: ApprovalStore? = null
+  @Autowired
+  private lateinit var approval: ApprovalStore
 
-    @Autowired
-    private val userService: UserService? = null
+  @Autowired
+  private lateinit var userService: UserService
 
-    @Autowired
-    private val authenticationManager: AuthenticationManager? = null
+  @Autowired
+  private val authenticationManager: AuthenticationManager? = null
 
-    override fun configure(security: AuthorizationServerSecurityConfigurer?) {
-        security!!.checkTokenAccess("isAuthenticated()")
-                .tokenKeyAccess("permitAll")
-                .passwordEncoder(encoder)
-    }
+  override fun configure(security: AuthorizationServerSecurityConfigurer?) {
+    security?.checkTokenAccess("isAuthenticated()")
+            ?.tokenKeyAccess("permitAll")
+            ?.passwordEncoder(encoder)
+  }
 
-    override fun configure(clients: ClientDetailsServiceConfigurer?) {
-        clients!!.jdbc(dataSource).passwordEncoder(encoder)
-    }
+  override fun configure(clients: ClientDetailsServiceConfigurer?) {
+    clients?.jdbc(dataSource)?.passwordEncoder(encoder)
+  }
 
-    override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {
-        endpoints!!.tokenStore(tokenStore)
-                .authenticationManager(authenticationManager)
-                .userDetailsService(userService)
-                .approvalStore(approval)
-    }
+  override fun configure(endpoints: AuthorizationServerEndpointsConfigurer?) {
+    endpoints?.tokenStore(tokenStore)
+            ?.authenticationManager(authenticationManager)
+            ?.userDetailsService(userService)
+            ?.approvalStore(approval)
+  }
 }

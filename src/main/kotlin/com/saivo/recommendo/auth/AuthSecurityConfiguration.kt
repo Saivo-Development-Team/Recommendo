@@ -14,20 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-class AuthSecurityConfiguration: WebSecurityConfigurerAdapter() {
+class AuthSecurityConfiguration : WebSecurityConfigurerAdapter() {
 
-    @Autowired
-    private val userService: UserService? = null
+  @Autowired
+  private lateinit var userService: UserService
 
-    @Autowired
-    private val encoder: PasswordEncoder? = null
+  @Autowired
+  private lateinit var encoder: PasswordEncoder
 
-    @Bean
-    override fun authenticationManagerBean(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
+  @Bean
+  override fun authenticationManagerBean(): AuthenticationManager {
+    return super.authenticationManagerBean()
+  }
 
-    override fun configure(auth: AuthenticationManagerBuilder?) {
-         auth!!.userDetailsService(userService).passwordEncoder(encoder)
-    }
+  override fun configure(auth: AuthenticationManagerBuilder?) {
+    auth?.userDetailsService(userService)?.passwordEncoder(encoder)
+  }
 }
