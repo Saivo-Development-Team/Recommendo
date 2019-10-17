@@ -62,9 +62,7 @@ class PreferenceService {
       runCatching {
         userService.getUserByEmail(email).preferences
       }.onSuccess {
-        data = (it ?: setOf()).toOpinions().apply {
-          println(this)
-        }
+        data = (it ?: setOf()).toOpinions()
         status = "SUCCESS"
         message = "Got Preferences for User with [$email]"
       }
@@ -76,23 +74,23 @@ class PreferenceService {
       it.toOpinion()
     }
   }
-}
 
-fun Preference.toOpinion(): Opinion {
-  return Opinion(
-    id = this.id,
-    likes = this.likes.value,
-    dislikes = this.dislikes.value,
-    category = this.category.name,
-    description = this.description
-  )
-}
+  fun Preference.toOpinion(): Opinion {
+    return Opinion(
+      id = this.id,
+      likes = this.likes.value,
+      dislikes = this.dislikes.value,
+      category = this.category.name,
+      description = this.description
+    )
+  }
 
-fun Opinion.toPreference(): Preference {
-  return Preference(
-    likes = Option.Like(this.likes),
-    dislikes = Option.Dislike(this.dislikes),
-    category = Option.Category(this.category),
-    description = this.description
-  )
+  fun Opinion.toPreference(): Preference {
+    return Preference(
+      likes = Option.Like(this.likes),
+      dislikes = Option.Dislike(this.dislikes),
+      category = Option.Category(this.category),
+      description = this.description
+    )
+  }
 }
